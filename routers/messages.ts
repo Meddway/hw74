@@ -21,6 +21,25 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const files: string[] = await fs.readdir(messagesWay);
+    const recentFiles: string[] = files.slice(-5);
+
+    const messages: object[] = await Promise.all(
+      recentFiles.map(async (file) => {
+        const filePath: string = path.join(messagesWay, file);
+        const content = await fs.readFile(filePath, 'utf-8');
+        return JSON.parse(content);
+      })
+    );
+
+    res.json(messages);
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 
 
 export default router;
